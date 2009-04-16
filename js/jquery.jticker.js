@@ -1,9 +1,9 @@
 // jquery.ticker.js
-// 0.9 - dev
+// 0.9.1 - beta
 // Stephen Band
 //
 // Project and documentation site:
-// http://webdev.stephband.info/ticker/
+// http://webdev.stephband.info/jticker/
 //
 // Dependencies:
 // jQuery 1.2.3 - (www.jquery.com)
@@ -66,12 +66,13 @@ function checkFamily(content, index) {
 }  
 
 function incrementIndex(index) {
-    if (index.length)       {index[index.length-1]++;
+    if (index.length > 1)   {index[index.length-1]++;
                              return index;}
-    else                    {return [0];}
+    else                    {return false;}
 }
 
-function buildIndex(content, index) {    
+function buildIndex(content, index) {
+    if (index === false)    {return false;}
     var obj = checkFamily(content, index);
     if (obj === false)      {return buildIndex(content, incrementIndex(index.slice(0, index.length-1)));}
     else if (obj === true)  {index[index.length] = 0;
@@ -80,7 +81,7 @@ function buildIndex(content, index) {
 }
 
 function buildFamily(elem, content, index, data) {
-    var newIndex, newElem;    
+    var newIndex, newElem;
     var child = elem.children().eq(index[0]);
     
     if (!index.length) {
@@ -125,7 +126,7 @@ function ticker(elem, threadIndex, data) {
     
     if (data.charIndex >= data.sum) {
         data.cursor.remove();
-        incrementIndex(data.elemIndex);
+        data.elemIndex = incrementIndex(data.elemIndex);
         return tape(elem, threadIndex);
     }
     else {
@@ -140,15 +141,14 @@ function ticker(elem, threadIndex, data) {
 }
 
 function tape(elem, threadIndex) {
-
     var data = elem.data(name);
 
     if (data.eventIndex == threadIndex) {
+        
         data.elemIndex = buildIndex(data.content, data.elemIndex);
-
-        if      (!data.charIndex)                       {initElem(elem);}
-        else if (data.elemIndex[0] == data.currentItem) {initChild(elem);}
-        else {
+        //console.log('INDEX '+data.elemIndex);
+        
+        if (data.elemIndex === false) {
             return setTimeout(function(){
                 if (data.running && (data.eventIndex == threadIndex)) {
                     advanceItem(elem);
@@ -157,6 +157,9 @@ function tape(elem, threadIndex) {
                 threadIndex = null;
             }, data.delay);
         }
+        else if (!data.charIndex)                       {initElem(elem);}
+        else                                            {initChild(elem);}
+
         jQuery.extend(data, buildFamily(elem, data.content, data.elemIndex));
         data.sum = data.sum + data.text.length;
         data.readout.append(data.cursor);
@@ -217,7 +220,6 @@ jQuery.fn[name] = function(options) {
 jQuery.fn[name].defaults = {
     rate:           40,         // Speed to print message.
     delay:          2000,       // Pause to read message.
-    startDelay:     0,          // Time before ticker starts.
     cursorList:     "_",        // A string or an array of strings or jQuery objects. If an array, the cursor loops through the array.
     cursor:         jQuery('<span class="cursor" />')
 }

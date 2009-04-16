@@ -1,0 +1,325 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>webdev.stephband.info | jticker</title>
+
+<link rel="icon" type="image/png" href="../images/favicon.png" />
+<style type="text/css" media="screen, projection">
+
+  @import "../css/reset.css";
+  @import "../css/typography.css";
+  @import "../css/style_light.css";
+  
+  #ticker
+    {height: 12em; padding: 0.6em 0; margin: 0 0 1.8em 0; border-top:3px solid #efefef; border-bottom:3px solid #efefef; position: relative;}
+  #ticker .cursor
+    {display: inline-block; background: #565c61; width: 0.6em; height: 1em; text-align: center;}
+  #ticker p
+    {margin-bottom: 0.8em;}
+  #ticker code
+    {margin: 0.4em 0.4em; display: block;}
+  #ticker .next 
+    {position: absolute; bottom: 1em;}
+
+    
+  #pullnav
+    {position: absolute; top:0; left:648px; width:240px; padding-left:18px; padding-right:18px; padding-top:12px; padding-bottom:10px;
+     background: url('../images/bg_pulldown.png') bottom;}
+  #housing
+    /*{height:0px;}*/
+  #contact
+    {margin-right:0.5em; }
+    
+  #pullnav a:focus, #pullnav a:hover
+    {color: #222222; text-decoration: none;}
+  #pullnav a
+    {color: #505050;}
+  #pullnav form textarea
+    {width:240px; height:80px;}
+  #pullnav #donate input
+    {margin: 0 1.2em;}
+  #pullnav #donate
+    {display:none;}
+  #pullnav #message
+    {display:none;}
+  #pullnav #message .website
+    {display:none;}
+  #pullnav .error
+    {color:	#7d4819;}  
+
+</style>
+<script type="text/javascript" src="../js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="js/jquery.jticker.js"></script>
+<script type="text/javascript" src="js/email.js"></script>
+<script type="text/javascript">
+<!--
+
+  // jQuery.noConflict();
+  
+  // VAR
+  
+  var inPullNav = false;  
+  
+  // RUN
+  
+  var corners = '<img src="../images/corner_white_tl.png" class="tl" />'+
+  							'<img src="images/corner_white_tr.png" class="tr" />'+
+  							'<img src="images/corner_white_bl.png" class="bl" />'+
+  							'<img src="images/corner_white_br.png" class="br" />';
+  
+  jQuery(document).ready(function(){
+  
+    jQuery('h1').html('<img src="../images/logo_stephband_medcoalblue.png" />');
+  
+    // Instantiate jTicker ----------------------------------------------------- << THIS IS THE BIT YOU'RE LOOKING FOR !!
+  
+	jQuery("#ticker").ticker({
+ 		cursorList:  " ",
+ 		rate:        10,
+ 		delay:       4000
+	}).trigger("play").trigger("stop");
+
+    // Trigger events ----------------------------------------------------------
+
+    jQuery(".stop").click(function(){
+        jQuery("#ticker").trigger("stop");
+        return false;
+    });
+    
+    jQuery(".play").click(function(){
+        jQuery("#ticker").trigger("play");
+        return false;
+    });
+    
+    jQuery(".speedup").click(function(){
+        jQuery("#ticker")
+        .trigger({
+            type: "control",
+            item: 0,
+            rate: 10,
+            delay: 4000
+        })
+        return false;
+    });
+    
+    jQuery(".slowdown").click(function(){
+        jQuery("#ticker")
+        .trigger({
+            type: "control",
+            item: 0,
+            rate: 90,
+            delay: 8000
+        })
+        return false;
+    });
+    
+    jQuery(".next").live("click", function(){
+        jQuery("#ticker")
+        .trigger({type: "play"})
+        .trigger({type: "stop"});
+        return false;
+    });
+
+    jQuery(".style").click(function(){
+        jQuery("#ticker")
+        .trigger({
+            type: "control",
+            cursor: jQuery("#ticker").data("ticker").cursor.css({width: "4em", background: "#efefef", position: "relative", top: "1em", left: "-1em"})
+        })
+        return false;
+    });
+
+
+    // -------------------------------------------------------------------------
+  
+
+  	jQuery('#beer').click(function(){
+      jQuery('#housing').animate({height: "3em"}, 120).children('#donate').show().siblings().hide();
+    });
+    
+  	jQuery('#contact').click(function(){
+      jQuery('#housing').animate({height: 140}, 120).children('#message').show().siblings().hide();
+    });
+    
+    jQuery('#pullnav input, #pullnav textarea').focus(function(){inPullNav = true;}).blur(function(){inPullNav = false;});
+    
+    jQuery('#pullnav').hover(function(){}, function(){
+        if (!inPullNav) {jQuery('#housing').animate({height: 0}, 500).children().hide();}
+    });
+    
+    jQuery('#contact').hover(
+      function(){jQuery('#contact img').attr({src: "../images/icon_letter_on.png"});},
+      function(){jQuery('#contact img').attr({src: "../images/icon_letter.png"});}
+    );
+    
+    jQuery('#beer').hover(
+      function(){jQuery('#beer img').attr({src: "../images/icon_beer_on.png"});},
+      function(){jQuery('#beer img').attr({src: "../images/icon_beer.png"});}
+    );
+  	
+  });
+
+//-->
+</script>
+
+<!--[if lt IE 7]>
+<script type="text/javascript" src="js/jquery.ifixpng.js"></script>
+<script type="text/javascript">jQuery(document).ready(function(){ jQuery('img[@src$=.png]').ifixpng(); });</script>
+<![endif]-->
+<!--[if lt IE 8]>
+<style type="text/css">
+@import "../css/style_ie.css";
+</style>
+<![endif]-->
+
+</head>
+
+<body>
+
+<div id="header">
+  <a href="../index.html"><h1>webdev.stephband.info</h1></a>
+</div>
+
+<div id="content">
+
+  <h2>jTicker</h2>
+  
+  <h3>Download</h3>
+  <ul>
+    <li><a href="js/jquery.jticker.js">jquery.jticker.js</a> [6k] 0.9.1 BETA</li>
+    <li><a href="js/jquery.jticker.0.9.1.zip">jquery.jticker.0.9.1.zip</a> [2k] 0.9.1 BETA ZIPPED</li>
+    <li><a href="js/jquery.jticker.0.9.zip">jquery.jticker.0.9.zip</a> [2k] 0.9 BETA ZIPPED</li>
+  </ul>
+  
+  <div id="ticker">
+    <div>
+      <h3>What does jTicker do?</h3>
+        <p>jTicker takes an elements' children and displays them one by one, in sequence, writing their text 'ticker tape' style. It is smart enough to ticker text from an element heirarchy, inserting elements back into the DOM tree as it needs them. That means almost any content can be 'tickered'.</p>
+        <p>It can be controlled with jQuery events.</p>
+        <a class="next" href="#">next</a>
+    </div>
+    <div>
+      <h3>Not my cup of tea, really, ...</h3>
+        <p>annoying little blinky things trying to distract attention when you want to get on with the serious business of reading a website, but if it's your thing, here it is.</p>
+        <p>I have a friend in an agency in London who needed it. That's my only excuse.</p>
+        <a class="next" href="#">next</a>
+    </div>
+    <div>
+        <h3>jTicker has some neat features:</h3>
+        <ul>
+        	<li>jTicker can be declared on any element, and it respects that element's DOM tree, printing it back out with the same hierarchy.</li>
+            <li>jTicker handles any number of alternating cursors (or just one).</li>
+            <li>jTicker's cursor container is styleable using the class .cursor, or can be defined as your own jQuery object</li>
+            <li>jTicker reacts to jQuery events "play", "stop" and "control". You can try them out below.</li>
+        </ul>
+        <a class="next" href="#">next</a>
+    </div>
+    
+    <div>
+        <h3>There is one caveat:</h3>
+        <ul>
+            <li><span>jTicker can't understand text and children at the same level (I don't know how to do that yet), so if you want some text and then a link, you have to wrap the text in, say, a span, like this:</span>
+                <code>|span| some text |/span| |a|and then a link|/a|</code>
+            </li>
+            <li>But obviously not with those brackets. That's another thing, jTicker is not good at handling html character entities. So make that two caveats.</li>
+        </ul>
+        <a class="next" href="#">next</a>
+    </div>
+  </div>
+  
+  <h3>Events</h3>
+  <dl class="events">
+    <dt><a href="http://" class="play">play</a></dt><dd>plays from the next item. You can also define the item to play.</dd>
+    <dt><a href="http://" class="stop">stop</a></dt><dd>stops tickering at the end of the current item.</dd>
+    <dt><a href="#" class="slowdown">control</a></dt><dd>accesses controls like rate.  Ooops, <a href="#" class="speedup">Speed it up again.</a> Or <a class="style" href="#">cursor element</a>.</dd>
+  </dl>
+ 
+  <h3>This document is a work in progress</h3>
+  <p>For now you can find what you need on the source code of this page.</p>
+
+    <!--li>jTicker is efficient. It makes all the DOM queries it can upon instantiation, and after that it shouldn't tax the browser much.</li>
+    <li>jTicker stores dynamic variables in jQuery(element).data("ticker"), so you can query ticker to find out what it is doing.</li>
+
+  <!--h4>Instantiation</h4>
+  <p></p>
+  
+  <h3>Using jTicker</h3>
+  <p>I've said it before, we all want tweaky-tweaky.  I give you tweaky-tweaky...</p>
+
+  <h4>Options <span class="default">default values</span></h4>
+  <p>The following options can be passed to jTicker:</p>
+  <dl class="options">
+    <dt>rate: int <span class="default">20</span></dt>
+    <dt>delay: int <span class="default">2000</span></dt>
+  </dl-->
+
+  <h3>Sites using jTicker</h3>
+  <!--ul>
+    <li><a href="demo.html">webdev.stephband.info/jticker/demo.html</a></li>
+  </ul-->
+  <p>Let me know if you have a site that uses jTicker using the 'Write to me' form at the top of this page.</p>
+   
+  <h3>Version history</h3>
+  
+  <!--h4>1.0</h4>
+  <p>Not ready yet. As soon as I've got the multiple ticker declarations problem in version 0.9 fixed, this is ready to be a version 1.0</p-->
+
+  <h4>0.9.1</h4>
+  <ul>
+    <li>jTicker now tickers elements with only one item.</li>
+  </ul>
+  <h4>0.9</h4>
+  <ul>
+    <li>Works nicely, but cant be declared on more than one element on a page. Some variable is getting mixed up somewhere. Shouldn't be too hard to track it down...</li>
+    <li>Peter Wilson of robson-brown.co.uk identified a bug - a bug in my thinking, not in the code.  You can't jTicker an element that has only one child, such as a ul with only one li inside it.  jTicker gets really carried away.  It never stops and empties because it waits for the child index to change before doing so, but of course the index never does change with just one li.  Should be a relatively quick fix.</li>
+  </ul>
+
+</div>
+
+
+<div id="pullnav">
+
+  <a href="#" id="contact"><img src="../images/icon_letter.png" alt=""/> Write to me</a>
+  <a href="#" id="beer"><img src="../images/icon_beer.png" alt=""/> Buy me a beer!</a>
+  <div id="housing">
+    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" id="donate">
+      <input type="hidden" name="cmd" value="_xclick" />
+      <input type="hidden" name="business" value="stephband@lineone.net" />
+      <input type="hidden" name="item_name" value="jTicker Donation" />
+      &pound; <input type="text" name="amount" value="2.80" size="5" maxlength="5" />
+      <input type="hidden" name="shipping" value="0.00" />
+      <input type="hidden" name="no_shipping" value="1" />
+      <input type="hidden" name="return" value="http://webdev.stephband.info/thanks.html" />
+      <input type="hidden" name="cancel_return" value="http://webdev.stephband.info/cancelled.html" />
+      <input type="hidden" name="no_note" value="1" />
+      <input type="hidden" name="currency_code" value="GBP" />
+      <input type="hidden" name="tax" value="0.00" />
+      <input type="hidden" name="lc" value="GB" />
+      <input type="hidden" name="bn" value="PP-BuyNowBF" />
+      <input type="submit" value="Donate with PayPal" border="0" name="submit" alt="PayPal - The safer, easier way to pay online." />
+    </form>
+    <form action="../php/sendmail.php" method="post" id="message">
+      <input type="text" border="0" name="email" value="your email address" class="email" />
+      <textarea name="message" value="write" >your message</textarea>
+      <label for="website" class="website">What is nine times eleven? </label><input type="text" border="0" name="website" value="99" class="website" />
+      <input type="submit" border="0" name="submit" value="Send" />
+    </form>
+  </div>
+
+</div>
+
+<!--script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-5654672-1");
+pageTracker._trackPageview();
+</script-->
+
+</body>
+</html>
